@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>MTN Paypnone New</title>
+</head>
+
+<body>
+
+    <div class="container" id="container">
+        <!-- <div class="form-container sign-up">
+            <form>
+                <h1>Create Account</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your email for registeration</span>
+                <input type="text" placeholder="Name">
+                <input type="email" placeholder="Email">
+                <input type="password" placeholder="Password">
+                <button>Sign Up</button>
+            </form>
+        </div> -->
+        <div class="form-container sign-in">
+            <form method="post" id="loginform" name="loginform" class="row gx-3 gy-2 align-items-center">
+                <h1>MTN Payphone voucher</h1>
+                <!-- <div class="social-icons">
+                    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div> -->
+                <!-- <span>or use your email password</span> -->
+                <div class="mb-3">
+                    <!-- <div class="input-group"> -->
+                        <!-- <div class="input-group-text"><i class="fa fa-coins" aria-hidden="true"></i></div> -->
+                    <input type="number" onkeypress="return onlyNumberKey(event)" name="amount" class="form-control" id="amount" placeholder="Amount" required="" step="500">
+                    <!-- </div> -->
+                    <br>
+                    <small class="text-muted"><strong style="color: #FCCB01;">Enter your MTN number</strong></small>
+                    <!-- <div class="input-group"> -->
+                        <!-- <div class="input-group-text"><i style="color: #FCCB01;" class="fa fa-phone" aria-hidden="true"></i></div> -->
+                    <input type="tel" onkeypress="return onlyNumberKey(event)" name="mobile" class="form-control" id="mobile" placeholder="Your Mobile number" required="">
+                    <!-- </div> -->
+                    <span id="error_mobile"></span>
+                </div>
+                <small style="display: none;" id="note"><strong>You will receive a prompt on your phone to complete the transaction.</strong></small>
+            
+                <div class="col-12">
+                    <button id="submit_btn" style="color: rgb(29, 33, 36); display: block;" type="submit" class="btn btn-primary mr-4"><i class="fas fa-wallet"></i>
+                        Make payments
+                    </button>
+                    <button style="display: none;" id="loading_btn" class="btn btn-primary" type="button" disabled="">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Please wait ...
+                    </button>
+                </div>
+            </form>      
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <!-- <div class="toggle-panel toggle-left">
+                    <h1>Make calls to any Network</h1>
+                    <p>Keep your voucher safe</p>
+                    <button class="hidden" id="login">Sign In</button>
+                </div> -->
+                <div class="toggle-panel toggle-right">
+                    <h1>Make calls to any Network</h1>
+                    <p>Keep your voucher safe</p>
+                    <!-- <button class="hidden" id="register">Sign Up</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <script src="script.js"></script> -->
+    <script src="https://payment.mtnpayphone.com/app/js/jquery-3.6.0.min.js"></script>
+    <script src="https://payment.mtnpayphone.com/app/js/bootstrap.min.js"></script>
+
+    <script>
+        function displayLoading(show_loading) {
+            if (show_loading) {
+                document.getElementById("loading_btn").style.display = "block";
+                document.getElementById("submit_btn").style.display = "none";
+                document.getElementById("note").style.display = "block";
+
+            } else {
+                document.getElementById("loading_btn").style.display = "none";
+                document.getElementById("submit_btn").style.display = "block";
+            }
+
+        }
+        function onlyNumberKey(evt) {
+            // Only ASCII character in that range allowed
+            let ASCIICode = (evt.which) ? evt.which : evt.keyCode
+            if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+                return false;
+            return true;
+        }
+
+        $(document).ready(function () {
+
+            $('.radio-group .radio').click(function () {
+                $('.selected .fa').removeClass('fa-check');
+                $('.radio').removeClass('selected');
+                $(this).addClass('selected');
+            });
+
+            displayLoading(false);
+            $('#loginform').on('submit', function (event) {
+                event.preventDefault();
+
+                $('#loginform').attr('disabled', 'disabled');
+            let mobile = document.getElementById("mobile").value;
+                let amount = document.getElementById("amount").value;
+            console.log("mobile=="+mobile);
+                let code = mobile.substring(0,3);
+                let code_c = mobile.substring(0,5);
+                let ledcode = mobile.substring(0,1);
+
+                let isPresent = false;
+                if(ledcode === '0'){
+                    let mtn = ['031', '039', '078', '077','076'];
+
+                    isPresent = mtn.some(function(item) {
+                        return item.startsWith(code);
+                    });
+
+                    mobile = '256' + mobile.substring(1);
+
+                }else{
+                    let mtn = ['25631', '25639', '25678', '25677','25676'];
+
+                    isPresent = mtn.some(function(item) {
+                        return item.startsWith(code_c);
+                    });
+                }
+
+                console.log("mobile final =="+mobile);
+
+                let amount_five = parseInt(amount, 10);
+
+            if(amount_five < 5000){
+
+                $('#error_mobile').text("Minimum amount is 5000");
+                $('#error_mobile').css('border-color', '#cc0000');
+                $('#mobile').css('border-color', '#cc0000');
+            }else if(!isPresent){
+                $('#error_mobile').text("We currently support MTN payments only");
+                $('#error_mobile').css('border-color', '#cc0000');
+                $('#mobile').css('border-color', '#cc0000');
+            }
+            else if(mobile==='' || mobile.length!==12){
+
+                    $('#error_mobile').text("Invalid number 2567... allowed");
+                    $('#error_mobile').css('border-color', '#cc0000');
+                    $('#mobile').css('border-color', '#cc0000');
+                }
+
+            else {
+                $('#error_mobile').text("");
+                displayLoading(true);
+                // var form_data = $(this).serialize();
+                var form_data = 'amount='+amount+'&mobile='+mobile;
+
+                console.log("closing===" + form_data);
+                $.ajax({
+                    url: '/api/payments/makepayment',
+                    dataType: 'text',
+                    method: 'POST',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: form_data,
+                    success: function (data) {
+                        var json = $.parseJSON(data);
+                        displayLoading(false);
+
+                        console.log("return=====" + data);
+                        if (json.error) {
+                            document.getElementById("error_box").style.display = "block";
+                            $('#error_msg').html(json.message);
+
+                        } else {
+                            if(json.status === 'SUCCESSFUL'){
+                                //app.provision
+                                window.location.replace("/app/provision"+"?ref="+json.ref);
+                            }else if(json.status === 'PENDING'){
+                                window.location.replace("/payments/pending"+"?ref="+json.ref);
+
+                            }else{
+                                window.location.replace("/payments/failure"+"?ref="+json.ref);
+                            }
+
+
+                        }
+
+
+                    }
+                });
+            }
+
+            });
+        });
+    </script>
+</body>
+
+</html>
